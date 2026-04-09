@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>429 — Thermo App</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0a0c10; --panel: #111318; --border: #1e2230; --accent: #00e5ff; --text: #e8eaf0; --muted: #5a6080; --error: #ff3d5a; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 56px;
+    text-align: center;
+    max-width: 480px;
+    width: 90%;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--error), transparent);
+  }
+  .code {
+    font-family: 'Space Mono', monospace;
+    font-size: 5rem;
+    font-weight: 700;
+    color: var(--error);
+    line-height: 1;
+    margin-bottom: 8px;
+    opacity: 0.9;
+  }
+  .title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .desc {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .shield {
+    width: 56px; height: 56px;
+    border: 1.5px solid rgba(255,61,90,0.3);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    background: rgba(255,61,90,0.06);
+  }
+  .shield svg { width: 26px; height: 26px; }
+  .btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .countdown {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--error);
+    margin-bottom: 24px;
+    opacity: 0.8;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="shield">
+    <svg viewBox="0 0 26 26" fill="none">
+      <path d="M13 2L4 6V13C4 18 8 22.4 13 24C18 22.4 22 18 22 13V6L13 2Z" stroke="#ff3d5a" stroke-width="1.4" fill="rgba(255,61,90,0.08)"/>
+      <path d="M9 13L12 16L17 10" stroke="#ff3d5a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="code">429</div>
+  <div class="title">Trop de requêtes détectées</div>
+  <div class="desc">
+    // DDoS Protection activée<br>
+    Vous avez dépassé la limite de requêtes autorisées.<br>
+    Attendez quelques secondes avant de réessayer.
+  </div>
+  <div class="countdown" id="cd">// Réessayez dans <span id="sec">30</span>s</div>
+  <a href="/" class="btn">← Retour à l'accueil</a>
+</div>
+<script>
+  let s = 30;
+  const el = document.getElementById('sec');
+  const cd = document.getElementById('cd');
+  const t = setInterval(() => {
+    s--;
+    el.textContent = s;
+    if (s <= 0) {
+      clearInterval(t);
+      cd.textContent = '// Vous pouvez réessayer maintenant';
+    }
+  }, 1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thermo App — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --panel: #111318;
+    --panel2: #0e1016;
+    --border: #1e2230;
+    --accent: #00e5ff;
+    --accent2: #ff6b35;
+    --text: #e8eaf0;
+    --muted: #5a6080;
+    --success: #00e676;
+    --error: #ff3d5a;
+    --sidebar: 240px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar);
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+
+  .sidebar-brand {
+    padding: 28px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-dot {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    animation: iconGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes iconGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(0,229,255,0.3); }
+    50% { box-shadow: 0 0 20px rgba(0,229,255,0.6); }
+  }
+
+  .brand-dot svg { width: 18px; height: 18px; }
+
+  .brand-name {
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-name span {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  nav { flex: 1; padding: 20px 12px; }
+
+  .nav-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    padding: 0 12px;
+    margin: 20px 0 8px;
+  }
+
+  .nav-label:first-child { margin-top: 0; }
+
+  nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+  }
+
+  nav a:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  nav a.active { background: rgba(0,229,255,0.1); color: var(--accent); }
+
+  nav a svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .sidebar-footer {
+    padding: 20px 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+
+  .avatar {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #000;
+    flex-shrink: 0;
+  }
+
+  .user-info { flex: 1; overflow: hidden; }
+  .user-name { font-size: 0.82rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-role {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+  }
+
+  .logout-btn {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .logout-btn:hover { color: var(--error); }
+  .logout-btn svg { width: 16px; height: 16px; }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--panel2);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .page-title h2 { font-size: 1.2rem; font-weight: 800; }
+  .page-title p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.2);
+    color: var(--accent);
+  }
+
+  .content { padding: 32px; flex: 1; }
+
+  /* ── CARDS ── */
+  .calc-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .calc-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .calc-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .calc-card h3::before {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .calc-card p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .input-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .field label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+
+  .field label sub {
+    font-size: 0.55rem;
+    vertical-align: sub;
+  }
+
+  .field input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,229,255,0.08);
+  }
+
+  .field input::placeholder { color: var(--muted); }
+
+  .calc-btn {
+    padding: 13px 32px;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .calc-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,229,255,0.3); }
+
+  /* RESULTS */
+  .results {
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .results-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 20px;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  .result-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .result-item.highlight {
+    border-color: rgba(0,229,255,0.3);
+    background: rgba(0,229,255,0.05);
+  }
+
+  .result-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-weight: 700;
+    display: block;
+  }
+
+  .result-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 6px;
+    display: block;
+  }
+
+  .verif-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-top: 16px;
+  }
+
+  .verif-ok { background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.3); color: var(--success); }
+  .verif-err { background: rgba(255,61,90,0.1); border: 1px solid rgba(255,61,90,0.3); color: var(--error); }
+
+  /* TABLE */
+  .table-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .table-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .table-header h3 { font-size: 0.95rem; font-weight: 700; }
+  .table-header p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .count-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    color: var(--muted);
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    padding: 12px 20px;
+    text-align: left;
+    background: rgba(0,0,0,0.2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    padding: 13px 20px;
+    border-bottom: 1px solid rgba(30,34,48,0.5);
+    color: var(--text);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  td.num { color: var(--accent); }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .alert-error {
+    background: rgba(255,61,90,0.08);
+    border: 1px solid rgba(255,61,90,0.25);
+    color: var(--error);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-dot">
+      <svg viewBox="0 0 18 18" fill="none">
+        <path d="M9 2C9 2 5 7 5 11C5 13.2 6.8 15 9 15C11.2 15 13 13.2 13 11C13 7 9 2 9 2Z" stroke="#00e5ff" stroke-width="1.2" fill="rgba(0,229,255,0.1)"/>
+        <circle cx="9" cy="11" r="2" fill="#00e5ff"/>
+      </svg>
+    </div>
+    <div class="brand-name">
+      ThermoApp
+      <span>// v2.0.0</span>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-label">Principal</div>
+    <a href="/" class="active">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.5"/></svg>
+      Dashboard
+    </a>
+    <a href="/historique">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 4.5V8L10.5 10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Historique
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar">{{ (session.fname or 'U')[0] | upper }}</div>
+      <div class="user-info">
+        <div class="user-name">{{ session.fname or 'Utilisateur' }}</div>
+        <div class="user-role">// connecté</div>
+      </div>
+      <a href="/logout" class="logout-btn" title="Déconnexion">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M6 2H3C2.4 2 2 2.4 2 3V13C2 13.6 2.4 14 3 14H6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M10 5L14 8L10 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><line x1="14" y1="8" x2="6" y2="8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="page-title">
+      <h2>Calcul VLE — Loi de Raoult</h2>
+      <p>// Vapour-Liquid Equilibrium</p>
+    </div>
+    <div class="topbar-right">
+      <span class="badge">● LIVE</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- CALC FORM -->
+    <div class="calc-card">
+      <h3>Nouveau Calcul</h3>
+      <p>// Entrez les fractions molaires et pressions de saturation</p>
+
+      {% if erreur %}
+      <div class="alert-error">⚠ {{ erreur }}</div>
+      {% endif %}
+
+      <form method="POST" action="/calculer">
+        <div class="input-grid">
+          <div class="field">
+            <label>x<sub>1</sub> — Fraction molaire</label>
+            <input type="number" name="x1" step="0.01" min="0" max="1" placeholder="0.00 → 1.00" value="{{ x1 or '' }}" required>
+          </div>
+          <div class="field">
+            <label>P<sub>sat1</sub> — Pression (kPa)</label>
+            <input type="number" name="psat1" step="0.01" placeholder="ex: 101.3" value="{{ psat1 or '' }}" required>
+          </div>
+          <div class="field">
+            <label>P<sub>sat2</sub> — Pression (kPa)</label>
+            <input type="number" name="psat2" step="0.01" placeholder="ex: 60.0" value="{{ psat2 or '' }}" required>
+          </div>
+        </div>
+        <button type="submit" class="calc-btn">CALCULER →</button>
+      </form>
+
+      {% if p_bulle %}
+      <div class="results">
+        <div class="results-title">// Résultats</div>
+        <div class="results-grid">
+          <div class="result-item">
+            <span class="result-val">{{ x1 }}</span>
+            <span class="result-label">x<sub>1</sub></span>
+          </div>
+          <div class="result-item">
+            <span class="result-val">{{ x2 }}</span>
+            <span class="result-label">x<sub>2</sub></span>
+          </div>
+          <div class="result-item highlight">
+            <span class="result-val">{{ p_bulle }}</span>
+            <span class="result-label">P bulle (kPa)</span>
+          </div>
+          <div class="result-item">
+            <span class="result-val">{{ y1 }}</span>
+            <span class="result-label">y<sub>1</sub></span>
+          </div>
+          <div class="result-item">
+            <span class="result-val">{{ y2 }}</span>
+            <span class="result-label">y<sub>2</sub></span>
+          </div>
+        </div>
+        <span class="verif-badge {% if verif_y %}verif-ok{% else %}verif-err{% endif %}">
+          {% if verif_y %}✓ Σy = 1 — Vérification OK{% else %}✗ Σy ≠ 1 — Erreur{% endif %}
+        </span>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- HISTORY TABLE -->
+    <div class="table-card">
+      <div class="table-header">
+        <div>
+          <h3>Historique des calculs</h3>
+          <p>// Tous les calculs effectués</p>
+        </div>
+        <span class="count-badge">{{ (data or [])|length }} entrées</span>
+      </div>
+
+      {% if data %}
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>x<sub>1</sub></th>
+            <th>x<sub>2</sub></th>
+            <th>P<sub>sat1</sub></th>
+            <th>P<sub>sat2</sub></th>
+            <th>P bulle</th>
+            <th>y<sub>1</sub></th>
+            <th>y<sub>2</sub></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in data|reverse %}
+          <tr>
+            <td class="num">{{ c.id }}</td>
+            <td>{{ "%.4f"|format(c.x1)      if c.x1      is not none else '—' }}</td>
+            <td>{{ "%.4f"|format(c.x2)      if c.x2      is not none else '—' }}</td>
+            <td>{{ "%.2f"|format(c.psat1)   if c.psat1   is not none else '—' }}</td>
+            <td>{{ "%.2f"|format(c.psat2)   if c.psat2   is not none else '—' }}</td>
+            <td class="num">{{ "%.4f"|format(c.p_bulle) if c.p_bulle is not none else '—' }}</td>
+            <td>{{ "%.4f"|format(c.y1)      if c.y1      is not none else '—' }}</td>
+            <td>{{ "%.4f"|format(c.y2)      if c.y2      is not none else '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">// Aucun calcul effectué</div>
+      {% endif %}
+    </div>
+
+  </div>
+</main>
+
+</body>
+</html>

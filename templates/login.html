@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thermo App — Connexion</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --panel: #111318;
+    --border: #1e2230;
+    --accent: #00e5ff;
+    --accent2: #ff6b35;
+    --text: #e8eaf0;
+    --muted: #5a6080;
+    --success: #00e676;
+    --error: #ff3d5a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* LEFT PANEL */
+  .left {
+    width: 55%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridMove 20s linear infinite;
+  }
+
+  @keyframes gridMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(40px, 40px); }
+  }
+
+  .glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+  }
+  .orb1 { width: 400px; height: 400px; background: var(--accent); top: -100px; left: -100px; animation: pulse 6s ease-in-out infinite; }
+  .orb2 { width: 300px; height: 300px; background: var(--accent2); bottom: -80px; right: 60px; animation: pulse 8s ease-in-out infinite reverse; }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.15; }
+    50% { transform: scale(1.2); opacity: 0.25; }
+  }
+
+  .brand {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .brand-icon {
+    width: 80px; height: 80px;
+    border: 2px solid var(--accent);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    position: relative;
+    animation: iconGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes iconGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(0,229,255,0.3); }
+    50% { box-shadow: 0 0 40px rgba(0,229,255,0.6), 0 0 80px rgba(0,229,255,0.2); }
+  }
+
+  .brand-icon svg { width: 40px; height: 40px; }
+
+  .brand h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent), #ffffff, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .brand p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 48px;
+    justify-content: center;
+  }
+
+  .stat { text-align: center; }
+  .stat-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.5rem;
+    color: var(--accent);
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* RIGHT PANEL */
+  .right {
+    width: 45%;
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    position: relative;
+  }
+
+  .right::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .form-wrap { width: 100%; max-width: 380px; }
+
+  .form-header { margin-bottom: 40px; }
+
+  .form-header h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .form-header p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .form-group { margin-bottom: 20px; }
+
+  label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+
+  input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,229,255,0.1);
+  }
+
+  input::placeholder { color: var(--muted); }
+
+  .btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s, height 0.4s;
+  }
+
+  .btn:hover::before { width: 300px; height: 300px; }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(0,229,255,0.35); }
+  .btn:active { transform: translateY(0); }
+
+  .alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    margin-bottom: 20px;
+    border: 1px solid;
+  }
+
+  .alert-error {
+    background: rgba(255,61,90,0.1);
+    border-color: rgba(255,61,90,0.3);
+    color: var(--error);
+  }
+
+  .form-footer {
+    text-align: center;
+    margin-top: 28px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .form-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .form-footer a:hover { opacity: 0.7; }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .divider span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ANIMATE IN */
+  .form-wrap { animation: slideIn 0.5s ease forwards; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    .left { display: none; }
+    .right { width: 100%; border-left: none; padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="left">
+  <div class="grid-bg"></div>
+  <div class="glow-orb orb1"></div>
+  <div class="glow-orb orb2"></div>
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 4C20 4 12 14 12 22C12 26.4 15.6 30 20 30C24.4 30 28 26.4 28 22C28 14 20 4 20 4Z" stroke="#00e5ff" stroke-width="2" fill="rgba(0,229,255,0.1)"/>
+        <circle cx="20" cy="22" r="4" fill="#00e5ff"/>
+        <line x1="20" y1="30" x2="20" y2="36" stroke="#00e5ff" stroke-width="2"/>
+        <line x1="8" y1="22" x2="12" y2="22" stroke="#00e5ff" stroke-width="1.5" opacity="0.5"/>
+        <line x1="28" y1="22" x2="32" y2="22" stroke="#00e5ff" stroke-width="1.5" opacity="0.5"/>
+        <line x1="10" y1="16" x2="13.5" y2="17.5" stroke="#00e5ff" stroke-width="1.5" opacity="0.3"/>
+        <line x1="30" y1="16" x2="26.5" y2="17.5" stroke="#00e5ff" stroke-width="1.5" opacity="0.3"/>
+      </svg>
+    </div>
+    <h1>ThermoApp</h1>
+    <p>// Thermodynamic Analysis Platform</p>
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-val">Raoult</span>
+        <span class="stat-label">Loi</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">VLE</span>
+        <span class="stat-label">Calculs</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">Live</span>
+        <span class="stat-label">Analyse</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="right">
+  <div class="form-wrap">
+    <div class="form-header">
+      <h2>Connexion</h2>
+      <p>// Entrez vos identifiants</p>
+    </div>
+
+    {% if erreur %}
+    <div class="alert alert-error">⚠ {{ erreur }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Nom d'utilisateur</label>
+        <input type="text" name="username" value="{{ username }}" placeholder="admin" autocomplete="username" required>
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn">SE CONNECTER →</button>
+    </form>
+
+    <div class="divider"><span>ou</span></div>
+
+    <div class="form-footer">
+      Pas encore de compte ? <a href="/register">Créer un compte</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
