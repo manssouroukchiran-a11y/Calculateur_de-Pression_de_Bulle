@@ -4,7 +4,7 @@ Flask-Mail==0.9.1
 Flask-WTF==1.2.1
 WTForms==3.1.1
 Werkzeug==3.0.1
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.10
 cryptography==41.0.7
 requests==2.31.0
 email-validator==2.1.0
