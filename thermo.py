@@ -10,11 +10,13 @@ import uuid
 import secrets
 import re
 import time
-
+import os
 app = Flask(__name__)
 app.secret_key = 'thermo_secret_2024'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:7394@localhost/thermo_app'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+    'DATABASE_URL',
+    'mysql+pymysql://root:7394@localhost/thermo_app')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # ═══════════════════════════════════════════
