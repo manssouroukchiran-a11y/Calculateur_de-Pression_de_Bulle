@@ -292,7 +292,7 @@ def register():
                 msg.body = f"""Bonjour {fname} !
 
 Clique sur ce lien pour confirmer ton compte :
-http://127.0.0.1:5000/confirm/{token}
+https://calculateur-de-pression-de-bulle-2.onrender.com/confirm/{token}
 
 Si tu n'as pas créé de compte, ignore ce message.
 
