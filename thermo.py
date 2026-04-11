@@ -446,5 +446,8 @@ with app.app_context():
             db.session.commit()
             print("✅ Admin mis à jour — is_admin=True")
 
+with app.app_context():
+    db.create_all()
+
 if __name__ == '__main__':
     app.run(debug=True)
